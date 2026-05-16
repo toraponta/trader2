@@ -1,6 +1,6 @@
 # データベース仕様 (Data Schema)
 
-本ドキュメントは、`docs/specs/spec.md` の要件を満たすためのデータベース（SQLite3）のテーブル定義およびスキーマ仕様をまとめたものです。
+本ドキュメントは、`docs/specs/spec.md` の要件を満たすためのデータベース（PostgreSQL）のテーブル定義およびスキーマ仕様をまとめたものです。
 旧システム（`_regacy/trader/backend/models.py`）の構造をベースとしつつ、AIの自律的なウォッチリスト管理や待機注文（Pending Order）などの新機能に対応する形にアップデートしています。
 
 ## ER図 (Entity Relationship)
@@ -29,9 +29,10 @@ erDiagram
 * **initial_cash** (Float): シミュレーション開始時の初期資金
 * **current_cash** (Float): 現在の利用可能な現金残高
 * **ai_model** (String): 使用するAIモデル（例: `gemini-1.5-pro`）
-* **auto_schedule_enabled** (Boolean): 自動実行が有効かどうか
-* **schedule_time** (String): 自動実行を行う時刻（例: `16:00`）
-* **auto_execute_trades** (Boolean): AIの判断をそのまま自動発注するかどうかのフラグ
+* **settings** (JSONB): エージェントの各種設定（ユーザーが変更する設定値・スケジュール等）を格納するJSON
+  * 構造例: `{"trade_schedule": {"enabled": true, "time": "16:00", "auto_execute": false}, "review_schedule": {"type": "WEEKLY", "value": "Friday"}}`
+* **status** (JSONB): エージェントの実行履歴や状態（システムが自動更新するステータス）を格納するJSON
+  * 構造例: `{"last_executed_date": "2026-05-16", "last_reviewed_date": "2026-05-14", "is_running": false, "last_error": null}`
 * **created_at** (DateTime): 作成日時
 
 ### 2. アクティブ・ウォッチリスト (`watchlists`)
